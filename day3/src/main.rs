@@ -48,8 +48,9 @@ fn main() -> Result<(), io::Error> {
     // print_map(snowfield, (2,1));
 
     if env::args().skip(1).next() == Some(String::from("part1")) {
-        println!("We encounter {} trees on the way to the airport", part1(snowfield, (3, 1)));
+        println!("We encounter {} trees on the way to the airport", part1(&snowfield, (3, 1)));
     } else if env::args().skip(1).next() == Some(String::from("part2")) {
+        println!("We encounter {} trees on the way to the airport", part2(snowfield));
     } else {
         print!("usage: cargo run (part1 | part2)\n");
         std::process::exit(1);
@@ -58,30 +59,30 @@ fn main() -> Result<(), io::Error> {
 }
 
 // I'm considering the top left of the map to be 0,0,
-fn part1(map: Vec<Vec<TileType>>, slope: (usize, usize)) -> i32 {
+fn part1(map: &Vec<Vec<TileType>>, slope: (usize, usize)) -> i32 {
     let (run, rise) = slope;
     let mut trees_encountered = 0;
     let mut column = 0;
     let mut row = 0;
-    while row < 11 {
+    let width = map[0].len();
+    while row < map.len() {
         match map[row][column] {
             TileType::Tree => trees_encountered += 1,
             _ => ()
         };
         row += rise;
-        column = (column + run) % map[0].len();
+        column = (column + run) % width;
     }
     trees_encountered
 }
 
-fn part2(map: [[TileType; 11]; 11], slope: (i32, i32)) -> i32 {
-    unimplemented!();
-    // let (run, rise) = slope;
-    // let mut trees_encountered = 0;
-    // let mut column = 0;
-    // let mut row = 0;
-
-    // trees_encountered
+fn part2(map: Vec<Vec<TileType>>) -> i64 {
+    let slope1_1 = part1(&map, (1,1)) as i64;
+    let slope3_1 = part1(&map, (3,1)) as i64;
+    let slope5_1 = part1(&map, (5,1)) as i64;
+    let slope7_1 = part1(&map, (7,1)) as i64;
+    let slope1_2 = part1(&map, (1,2)) as i64;
+    slope1_1 * slope3_1 * slope5_1 * slope7_1 * slope1_2
 }
 
 fn print_map(map: Vec<Vec<TileType>>, location: (usize, usize)) {
