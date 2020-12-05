@@ -28,7 +28,7 @@ fn validate_eyr(val: &str) -> bool {
 fn validate_hgt(val: &str) -> bool {
     lazy_static! {
         static ref CM_VALIDATOR: Regex = Regex::new(r"^\d{3}cm$").unwrap();
-        static ref IN_VALIDATOR: Regex = Regex::new(r"^\d{2}cm$").unwrap();
+        static ref IN_VALIDATOR: Regex = Regex::new(r"^\d{2}in$").unwrap();
     }
     if CM_VALIDATOR.is_match(val) {
         let height_in_cm = val[0..3].parse::<i32>().unwrap();
@@ -42,7 +42,7 @@ fn validate_hgt(val: &str) -> bool {
 }
 fn validate_hcl(val: &str) -> bool {
     lazy_static! {
-        static ref HCL_VALIDATOR: Regex = Regex::new(r"^#[0-9a-fA-F]{6}$").unwrap();
+        static ref HCL_VALIDATOR: Regex = Regex::new(r"^#[0-9a-f]{6}$").unwrap();
     }
     HCL_VALIDATOR.is_match(val)
 }
