@@ -39,8 +39,7 @@ fn part1(preamble_length: usize, cipher_text: &Vec<i64>) -> Option<i64> {
             }
         }
         if found_two_sum {
-            // or_insert is unecessary because it's guaranteed to be in the map
-            *sliding_window.entry(*earliest_block).or_insert(1) -= 1;
+            *sliding_window.get_mut(earliest_block).unwrap() -= 1;
             *sliding_window.entry(*next_block).or_insert(0) += 1;
         } else {
             return Some(*next_block);
