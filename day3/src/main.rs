@@ -45,7 +45,6 @@ fn main() -> Result<(), io::Error> {
             }
         }
     }
-    // print_map(snowfield, (2,1));
 
     if env::args().skip(1).next() == Some(String::from("part1")) {
         println!("We encounter {} trees on the way to the airport", part1(&snowfield, (3, 1)));

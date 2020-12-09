@@ -101,10 +101,10 @@ fn main() -> Result<(), io::Error> {
                     }
                 });
             }
+            if field_map == 0b01111111 {
+                valid_passports += 1;
+            }
         }
-    }
-    if field_map == 0b01111111 {
-        valid_passports += 1;
     }
 
     println!("There are {} valid passports", valid_passports);
