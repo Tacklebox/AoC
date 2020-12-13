@@ -1,0 +1,97 @@
+#![allow(dead_code)]
+use std::{env, error::Error, fmt::{self, Display}, fs::File, io::{self, BufRead}, path::Path};
+use anyhow::{Context, Result};
+
+#[derive(Debug, Display)]
+struct FloorMapError;
+impl Display for FloorMapError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "FloorMapError occurred")
+    }
+}
+
+impl Error for FloorMapError {}
+
+#[derive(Debug, Clone, Copy)]
+enum Space {
+    Floor,
+    Empty,
+    Occupied,
+}
+
+
+struct FloorMap {
+    grid: Vec<Vec<Space>>,
+    width: usize,
+    height: usize,
+}
+
+impl FloorMap {
+    fn from_reader(reader: impl BufRead) -> Result<Self> {
+        let grid: Vec<Vec<Space>> = reader.lines().map(|l| l.unwrap().chars().map(|c| match c {
+            '.' => Space::Floor,
+            'L' => Space::Empty,
+            '#' => Space::Occupied,
+            _ => std::process::exit(1),
+        }).collect::<Vec<Space>>()).collect();
+        let width = grid[0].len();
+        for row in grid.iter() {
+            if row.len() != width {
+                return Err(FloorMapError).context("Not all lines of input were the same length");
+            }
+        }
+        Ok(FloorMap { grid, height: grid.len(), width })
+    }
+
+    fn get(x: usize, y: usize) -> Result<&Space, Box<dyn Error>> {
+    }
+
+    fn set(x: usize, y: usize) -> Result<(), Box<dyn Error>> {
+    }
+}
+
+fn main() -> Result<(), Box<dyn Error>> {
+    let input_path = Path::new("./input.txt");
+    let input_file = File::open(input_path)?;
+    let mut adaptors: Vec<i64> = io::BufReader::new(input_file).lines().map(|l| l.unwrap().parse::<i64>().unwrap()).collect();
+    adaptors.sort();
+    adaptors.insert(0,0);
+    adaptors.push(adaptors.last().unwrap() + 3);
+
+    if env::args().skip(1).next() == Some(String::from("part1")) {
+        if let Some(( low, _, high )) = part1(&adaptors) {
+            println!("Product of low and high joltage differences {}", low * high);
+        }
+        std::process::exit(0);
+    } else if env::args().skip(1).next() == Some(String::from("part2")) {
+        // let mut memo: HashMap<i64, i64> = HashMap::new();
+        // let permutations = part2(&adaptors, &mut memo);
+        // println!("permutations {}", permutations);
+        std::process::exit(0);
+    } else {
+        println!("usage: cargo run (part1 | part2)");
+        std::process::exit(1);
+    }
+}
+
+// Returns none if not sorted or larger than 3 jolt gap
+fn part1(adaptors: &Vec<i64>) -> i32 {
+    0
+}
+
+// fn part2(adaptors: &[i64], memo: &mut HashMap<i64,i64>) -> i64 {
+//     if adaptors.len() <= 2 {
+//         return 1
+//     }
+//     if let Some(permutations) = memo.get(&adaptors[0]) {
+//         return *permutations;
+//     }
+//     let mut permutations = 0;
+//     for (index, adaptor) in adaptors[1..].iter().take(3).enumerate() {
+//         if adaptor - adaptors[0] <= 3 {
+//             permutations += part2(&adaptors[index+1..], memo);
+//         }
+//     }
+//     memo.insert(adaptors[0], permutations);
+//     permutations
+// }
