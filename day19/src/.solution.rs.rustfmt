@@ -1,0 +1,92 @@
+use regex::{Regex, RegexSet};
+use std::collections::HashMap;
+
+#[derive(Debug, PartialEq)]
+enum Rule {
+    Lit(char),
+    Rule(i32),
+    Sequence(i32, i32),
+    Either(Box<Rule>, Box<Rule>),
+}
+
+struct Rules {
+    rules: HashMap<i32, Rule>
+}
+
+impl Rules {
+    fn from_lines(lines: &mut impl Iterator<Item = String>) -> Self {
+        let rules: HashMap<i32, Rule> = HashMap::new();
+        let patterns = &[
+            r"^(\d+): (\d+) (\d+) | (\d+) (\d+)$",
+            r"^(\d+): (\d+) | (\d+)$",
+            r"^(\d+): (\d+) (\d+)$",
+            r"^(\d+): (\d+)$",
+            r#"^(\d+): "(.)"$"#,
+        ];
+        let set = RegexSet::new(patterns).unwrap();
+        let regexs = Vec::new();
+        for pattern in patterns.iter() {
+            regexs.push(Regex::new(pattern).unwrap());
+        }
+        for line in lines {
+            let matches: Vec<_> = set.matches(&line).into_iter().collect();
+            if matches.len() != 1 {
+                panic!("Somehow matched multiple rules");
+            }
+            match matches[0] {
+                0 => {
+                    let captures = regexs[0].captures(&line).unwrap();
+                    let rule_number = captures.get(1).unwrap().as_str().parse();
+                    let rule = Rule::Either(Box::new(Rule::Sequence(
+                                    captures.get(2).unwrap().as_str().parse().unwrap(),
+                                    captures.get(3).unwrap().as_str().parse().unwrap())),
+                                    Box::new(Rule::Sequence(
+                                    captures.get(4).unwrap().as_str().parse().unwrap(),
+                                    captures.get(5).unwrap().as_str().parse().unwrap())));
+                }
+                1 => {
+                    let captures = regexs[1].captures(&line).unwrap();
+                }
+                2 => {
+                    let captures = regexs[2].captures(&line).unwrap();
+                }
+                3 => {
+                    let captures = regexs[3].captures(&line).unwrap();
+                }
+                4 => {
+                    let captures = regexs[4].captures(&line).unwrap();
+                }
+            }
+        }
+        Rules { rules }
+    }
+}
+
+pub fn part1(input: impl Iterator<Item = String>) -> i64 {
+    0
+}
+
+pub fn part2(input: impl Iterator<Item = String>) -> i64 {
+    0
+}
+
+mod test {
+    #[test]
+    fn part1() {
+        let input = vec![
+            String::from("0: 4 1 5"),
+            String::from("1: 2 3 | 3 2"),
+            String::from("2: 4 4 | 5 5"),
+            String::from("3: 4 5 | 5 4"),
+            String::from("4: \"a\""),
+            String::from("5: \"b\""),
+            String::from(""),
+            String::from("ababbb"),
+            String::from("bababa"),
+            String::from("abbbab"),
+            String::from("aaabbb"),
+            String::from("aaaabbb"),
+        ];
+        assert_eq!(super::part1(input.into_iter()), 2);
+    }
+}
